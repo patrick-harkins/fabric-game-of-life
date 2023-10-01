@@ -2,11 +2,30 @@
 <html>
 <head>
     <title>Fabric.js Grid Example</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #canvas-container {
+            text-align: center;
+        }
+
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
 </head>
 <body>
-    <button id="step">Step</button>
-    <canvas id="canvas" width="500" height="500"></canvas>
+    <div id="canvas-container">
+        <button id="step">Step</button>
+        <canvas id="canvas" width="500" height="500"></canvas>
+    </div>
     <script src="./main.js"></script>
 </body>
 </html>
