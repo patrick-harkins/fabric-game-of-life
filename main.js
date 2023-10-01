@@ -222,16 +222,20 @@ class LifeCanvas extends fabric.Canvas {
         this.grid = new LifeGrid(this.squareLen, Nx, Ny);
     }
 
+    pauseAnimation() {
+        clearTimeout(this.timeoutId)
+    }
+
 
     run(delay) {
-        setTimeout(()=>{
+        this.timeoutId = setTimeout(()=>{
             this.step();
             this.run(delay);
         }, delay);
     }
 
     startAmimation(delay) {
-        setTimeout(()=>{
+        this.timeoutId = setTimeout(()=>{
             this.run(delay);
         }, Math.floor(2.5*delay))
     }
@@ -261,3 +265,5 @@ const clearButton = document.getElementById("clear");
 clearButton.onclick = () => {canvas.grid.killAll(); canvas.renderAll()}
 const randomButton = document.getElementById("random");
 randomButton.onclick = () => {canvas.grid.paintSplatter(14); canvas.renderAll();}
+const pauseButton = document.getElementById("pause")
+pauseButton.onclick = () => {canvas.pauseAnimation()}

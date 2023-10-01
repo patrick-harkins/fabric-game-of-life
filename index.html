@@ -20,12 +20,18 @@
         canvas {
             border: 1px solid black;
         }
+
+        h1 {
+            font-family: sans-serif;
+            text-align: center;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
 </head>
 <body>
     <div id="canvas-container">
-        <button id="step">Step</button>&nbsp;<button id="run">Run</button>&nbsp;<button id="clear">Clear</button>&nbsp;<button id="random">Random</button>
+        <h1>A Game of Life & Death</h1>
+        <button id="step">Step</button>&nbsp;<button id="run">Run</button>&nbsp;<button id="clear">Clear</button>&nbsp;<button id="random">Random</button>&nbsp;<button id="pause">Pause</button>
         <canvas id="canvas" width="1000" height="500"></canvas>
     </div>
     <script src="./main.js"></script>
