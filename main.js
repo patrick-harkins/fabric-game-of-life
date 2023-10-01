@@ -67,7 +67,6 @@ class LifeSquare extends fabric.Rect {
             hasBorders: false
         });
 
-        console.log(this);
         this.x = x;
         this.y = y;
         this.alive = false;
@@ -97,7 +96,6 @@ class LifeSquare extends fabric.Rect {
 class LifeGrid {
     constructor(squareLen, Nx, Ny) {
         this.grid = [];
-        console.log(Nx)
         this.gridBool = Array(Nx);
         this.Nx = Nx;
         this.Ny = Ny;
@@ -155,6 +153,16 @@ class LifeGrid {
 
 class LifeCanvas extends fabric.Canvas {
     constructor(squareLen) {
+        var htmlCanvas = document.getElementById("canvas");
+
+        var canvWidth = window.screen.width - 4*squareLen;
+        var canvHeight = window.screen.height - 4*squareLen;
+
+        this.Nx = 
+
+        htmlCanvas.height = Math.floor(canvHeight / squareLen)*squareLen;
+        htmlCanvas.width = Math.floor(canvWidth / squareLen)*squareLen;
+
         super('canvas');
         this.hoverCursor = 'pointer';
         this.width = this.getWidth();
@@ -163,9 +171,7 @@ class LifeCanvas extends fabric.Canvas {
     }
 
     addGrid() {
-
         var Nx = Math.floor(this.width / this.squareLen);
-        console.log(Nx)
         var Ny = Math.floor(this.height / this.squareLen);
         this.grid = new LifeGrid(this.squareLen, Nx, Ny);
     }
