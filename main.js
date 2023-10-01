@@ -145,7 +145,6 @@ class LifeGrid {
             }
         }
         this.gridWriteback();
-        canvas.renderAll();
     }
 
 
@@ -158,16 +157,31 @@ class LifeCanvas extends fabric.Canvas {
         var canvWidth = window.screen.width - 4*squareLen;
         var canvHeight = window.screen.height - 4*squareLen;
 
-        this.Nx = 
+        var Nx = Math.floor(canvHeight / squareLen)
+        var Ny = Math.floor(canvWidth / squareLen)
 
-        htmlCanvas.height = Math.floor(canvHeight / squareLen)*squareLen;
-        htmlCanvas.width = Math.floor(canvWidth / squareLen)*squareLen;
+        htmlCanvas.height = Nx*squareLen;
+        htmlCanvas.width = Ny*squareLen;
 
         super('canvas');
+
+        this.Nx = Nx
+        this.Ny = Ny
+
+
         this.hoverCursor = 'pointer';
         this.width = this.getWidth();
         this.height = this.getHeight();
         this.squareLen = squareLen;
+    }
+
+    step() {
+        const startTime = new Date();
+        this.grid.step();
+        this.renderAll();
+        const endTime = new Date;
+        //var dstring = `${endTime.getMinutes()}:${endTime.getSeconds()}`
+        //console.log(`${dstring} ${endTime-startTime}ms render ${this.Nx} by ${this.Ny} grid`)
     }
 
     addGrid() {
@@ -175,9 +189,25 @@ class LifeCanvas extends fabric.Canvas {
         var Ny = Math.floor(this.height / this.squareLen);
         this.grid = new LifeGrid(this.squareLen, Nx, Ny);
     }
+
+    run(delay) {
+        setTimeout(()=>{
+            this.step();
+            this.run(delay);
+        }, delay);
+    }
+
+    startAmimation(delay) {
+        setTimeout(()=>{
+            this.run(delay);
+        }, Math.floor(2.5*delay))
+    }
 }
+
 
 var canvas = new LifeCanvas(50);
 canvas.addGrid(50);
 const stepButton = document.getElementById("step");
-stepButton.onclick = () => {canvas.grid.step()}
+stepButton.onclick = () => {canvas.step()}
+const runButton = document.getElementById("run");
+runButton.onclick = () => {canvas.startAmimation(250)}
