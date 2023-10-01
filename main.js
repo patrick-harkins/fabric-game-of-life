@@ -55,18 +55,19 @@ class LifeSquare extends fabric.Rect {
 
     }
 
-    constructor(x, y) {
+    constructor(x, y, len) {
         super({
-            left: x * 50,
-            top: y * 50,
-            width: 50,
-            height: 50,
+            left: x * len,
+            top: y * len,
+            width: len,
+            height: len,
             fill: 'grey',
             selectable: false,
             hasControls: false,
             hasBorders: false
         });
 
+        console.log(this);
         this.x = x;
         this.y = y;
         this.alive = false;
@@ -94,29 +95,31 @@ class LifeSquare extends fabric.Rect {
 }
 
 class LifeGrid {
-    constructor(canvas, size) {
+    constructor(squareLen, Nx, Ny) {
         this.grid = [];
-        this.gridBool = Array(size);
-        this.size = size;
+        console.log(Nx)
+        this.gridBool = Array(Nx);
+        this.Nx = Nx;
+        this.Ny = Ny;
         // Create the grid of squares
-        for (var i = 0; i < size; i++) {
+        for (var i = 0; i < Nx; i++) {
             let row = [];
-            for (var j = 0; j < size; j++) {
-                var square = new LifeSquare(i, j);
+            for (var j = 0; j < Ny; j++) {
+                var square = new LifeSquare(i, j, squareLen);
                 row.push(square);
                 canvas.add(square);
             }
             this.grid.push(row);
-            this.gridBool[i] = Array(size).fill(false);;
+            this.gridBool[i] = Array(Ny).fill(false);
         }
     }
 
     getNeighbors (x, y, alive) {
         var neighbors = 0;
         for (var i = x-1; i <= x+1; i++) {
-            if (i < 0 || i >= this.size) continue;
+            if (i < 0 || i >= this.Nx) continue;
             for (var j = y-1; j <= y+1; j++) {
-                if (j < 0 || j >= this.size) continue;
+                if (j < 0 || j >= this.Ny) continue;
                 if (this.grid[i][j].alive) {
                     neighbors++;
                 }
@@ -127,8 +130,8 @@ class LifeGrid {
     }
 
     gridWriteback() {
-        for (var i = 0; i < this.size; i++) {
-            for (var j = 0; j < this.size; j++) {
+        for (var i = 0; i < this.Nx; i++) {
+            for (var j = 0; j < this.Ny; j++) {
                 var Rect = this.grid[i][j];
                 Rect.setLife(this.gridBool[i][j]);
             }
@@ -136,8 +139,8 @@ class LifeGrid {
     }
 
     step() {
-        for (var i = 0; i < this.size; i++) {
-            for (var j = 0; j < this.size; j++) {
+        for (var i = 0; i < this.Nx; i++) {
+            for (var j = 0; j < this.Ny; j++) {
                 var Rect = this.grid[i][j];
                 var n = this.getNeighbors(i, j, Rect.alive);
                 this.gridBool[i][j] = Rect.liveordie(n);
@@ -145,15 +148,30 @@ class LifeGrid {
         }
         this.gridWriteback();
         canvas.renderAll();
-        console.log()
     }
 
 
 }
 
+class LifeCanvas extends fabric.Canvas {
+    constructor(squareLen) {
+        super('canvas');
+        this.hoverCursor = 'pointer';
+        this.width = this.getWidth();
+        this.height = this.getHeight();
+        this.squareLen = squareLen;
+    }
 
-var canvas = new fabric.Canvas('canvas');
-canvas.hoverCursor = 'pointer';
-var grid = new LifeGrid(canvas, 10);
+    addGrid() {
+
+        var Nx = Math.floor(this.width / this.squareLen);
+        console.log(Nx)
+        var Ny = Math.floor(this.height / this.squareLen);
+        this.grid = new LifeGrid(this.squareLen, Nx, Ny);
+    }
+}
+
+var canvas = new LifeCanvas(50);
+canvas.addGrid(50);
 const stepButton = document.getElementById("step");
-stepButton.onclick = () => {grid.step()}
+stepButton.onclick = () => {canvas.grid.step()}
