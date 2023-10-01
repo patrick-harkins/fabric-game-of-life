@@ -31,6 +31,8 @@ class LifeSquare extends fabric.Rect {
 
     setColor(color) {
         this.set("fill", color);
+        if(!this.strokeBorder)
+            this.set("stroke", color)
     }
 
     flushColor(mouseOn) {
@@ -71,6 +73,13 @@ class LifeSquare extends fabric.Rect {
         this.y = y;
         this.alive = false;
 
+        this.strokeBorder = false;
+
+        if (!this.strokeBorder) {
+            this.set("stroke", "grey");
+        }
+
+        console.log(this);
 
         // Add hover event listener
         this.on('mouseover', function() {
@@ -136,6 +145,24 @@ class LifeGrid {
         }
     }
 
+    killAll() {
+        for (var i = 0; i < this.Nx; i++) {
+            for (var j = 0; j < this.Ny; j++) {
+                this.grid[i][j].die();
+            }
+        }
+    }
+
+    paintSplatter(pctg) {
+        for (var i = 0; i < this.Nx; i++) {
+            for (var j = 0; j < this.Ny; j++) {
+                if ( pctg >= Math.floor(Math.random() * 101) ) {
+                    this.grid[i][j].live();
+                }
+            }
+        }
+    }
+
     step() {
         for (var i = 0; i < this.Nx; i++) {
             for (var j = 0; j < this.Ny; j++) {
@@ -157,6 +184,8 @@ class LifeCanvas extends fabric.Canvas {
         var canvWidth = window.screen.width - 4*squareLen;
         var canvHeight = window.screen.height - 4*squareLen;
 
+        console.log(`${[window.screen.width,window.screen.height]}`)
+
         var Nx = Math.floor(canvHeight / squareLen)
         var Ny = Math.floor(canvWidth / squareLen)
 
@@ -172,6 +201,9 @@ class LifeCanvas extends fabric.Canvas {
         this.hoverCursor = 'pointer';
         this.width = this.getWidth();
         this.height = this.getHeight();
+        console.log(this.width)
+        console.log(this.height)
+
         this.squareLen = squareLen;
     }
 
@@ -190,24 +222,48 @@ class LifeCanvas extends fabric.Canvas {
         this.grid = new LifeGrid(this.squareLen, Nx, Ny);
     }
 
+    pauseAnimation() {
+        clearTimeout(this.timeoutId)
+    }
+
+
     run(delay) {
-        setTimeout(()=>{
+        this.timeoutId = setTimeout(()=>{
             this.step();
             this.run(delay);
         }, delay);
     }
 
     startAmimation(delay) {
-        setTimeout(()=>{
+        this.timeoutId = setTimeout(()=>{
             this.run(delay);
         }, Math.floor(2.5*delay))
     }
 }
 
+/*
 
-var canvas = new LifeCanvas(50);
-canvas.addGrid(50);
+// get total height for <header>, including padding
+var headerEl = document.getElementById("header");
+var headerHeight = +headerEl.offsetHeight;
+var headerBoxShadow = window.getComputedStyle(headerEl).boxShadow;
+var headerBoxShadowY = +headerBoxShadow.split("px")[2].trim();
+
+// set margin-top to <form> depending on <header> height
+var formEl = document.getElementById("form");
+formEl.style.marginTop = headerHeight + headerBoxShadowY + 'px';
+
+*/
+
+var canvas = new LifeCanvas(30);
+canvas.addGrid();
 const stepButton = document.getElementById("step");
 stepButton.onclick = () => {canvas.step()}
 const runButton = document.getElementById("run");
 runButton.onclick = () => {canvas.startAmimation(250)}
+const clearButton = document.getElementById("clear");
+clearButton.onclick = () => {canvas.grid.killAll(); canvas.renderAll()}
+const randomButton = document.getElementById("random");
+randomButton.onclick = () => {canvas.grid.paintSplatter(14); canvas.renderAll();}
+const pauseButton = document.getElementById("pause")
+pauseButton.onclick = () => {canvas.pauseAnimation()}
